@@ -12,7 +12,7 @@ private val authRepository: IAuthRepository
     override suspend fun register(userRequest: UserRequest): UserResponse {
         return authRepository.register(userRequest)
     }
-    override suspend fun validateOtpAndLogin(otp: Int): AuthenticationResponse {
+    override suspend fun validateOtpAndLogin(otp: Int): UserResponse {
         return authRepository.validateOtpAndLogin(otp)
     }
 

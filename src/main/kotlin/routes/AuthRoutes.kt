@@ -1,7 +1,10 @@
 package com.meesam.routes
 
 import com.meesam.domain.dto.AuthenticationRequest
+import com.meesam.domain.dto.LoginRequest
+import com.meesam.domain.dto.LoginResponse
 import com.meesam.domain.dto.UserRequest
+import com.meesam.security.TokenService
 import com.meesam.services.IAuthService
 import com.meesam.utils.BeanValidation
 import io.ktor.http.HttpStatusCode
@@ -13,6 +16,11 @@ import io.ktor.server.routing.route
 
 
 fun Route.authRoutes(authService: IAuthService) {
+    val jwtIssuer = environment.config.property("jwt.issuer").getString()
+    val jwtAudience = environment.config.property("jwt.audience").getString()
+    val jwtSecret = environment.config.property("jwt.secret").getString()
+    val tokenService = TokenService(jwtIssuer, jwtAudience, jwtSecret)
+
     route("/auth") {
         route("/register") {
           post {
@@ -38,6 +46,32 @@ fun Route.authRoutes(authService: IAuthService) {
                 val result = authService.generateOtp(body)
                 call.respond(HttpStatusCode.Created, message = result)
             }
+        }
+
+        route("/login"){
+           post {
+               val body = call.receive<LoginRequest>()
+               val errors = BeanValidation.errorsFor(body)
+               if (errors.isNotEmpty()) {
+                   call.respond(HttpStatusCode.UnprocessableEntity, mapOf("errors" to errors))
+                   return@post
+               }
+               val user = authService.validateOtpAndLogin(body.otp)
+               user.let {
+                   val access = tokenService.createAccessToken(user.phoneNumber!!, user.role)
+                   val refresh = tokenService.createRefreshToken(user.id, phoneNumber = user.phoneNumber)
+                   call.respond(
+                       HttpStatusCode.OK,
+                       LoginResponse(
+                           accessToken = access.token,
+                           accessTokenExpiresAt = access.expiresAt.toString(),
+                           refreshToken = refresh.token,
+                           refreshTokenExpiresAt = refresh.expiresAt.toString(),
+                           user = user
+                       )
+                   )
+               }
+           }
         }
     }
 }

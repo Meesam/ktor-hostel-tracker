@@ -3,6 +3,7 @@ package com.meesam
 import com.meesam.data.db.DatabaseFactory
 import com.meesam.data.repositories.AuthRepository
 import com.meesam.data.repositories.IAuthRepository
+import com.meesam.plugins.configureDependencies
 import com.meesam.plugins.configureHTTP
 import com.meesam.plugins.configureMonitoring
 import com.meesam.plugins.configureRouting
@@ -21,14 +22,6 @@ fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
-val appModule = module {
-    // Bind the interface to the implementation
-    single<IAuthRepository> { AuthRepository() }
-
-    // Inject the repository into the service
-    single<IAuthService> { AuthService(get()) }
-}
-
 fun Application.module() {
     DatabaseFactory.init(environment)
     configureSerialization()
@@ -36,9 +29,6 @@ fun Application.module() {
     configureMonitoring()
     configureHTTP()
     configureSecurity()
-    install(Koin) {
-        slf4jLogger()
-        modules(appModule)
-    }
+    configureDependencies()
     configureRouting()
 }

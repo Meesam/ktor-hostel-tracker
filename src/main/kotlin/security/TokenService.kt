@@ -2,6 +2,7 @@ package com.meesam.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import kotlinx.serialization.Contextual
 import java.security.SecureRandom
 import java.time.Instant
 import java.util.Base64
@@ -18,7 +19,7 @@ data class AccessTokenResult(
 
 data class RefreshTokenPlain(
     val token: String,   // opaque string we return to the client
-    val userId: Long,
+    val userId: @Contextual UUID,
     val phoneNumber: String,
     val jti: String,
     val expiresAt: Instant
@@ -51,7 +52,7 @@ class TokenService(
         return AccessTokenResult(token, exp)
     }
 
-    fun createRefreshToken(userId: Long, phoneNumber: String): RefreshTokenPlain {
+    fun createRefreshToken(userId: @Contextual UUID, phoneNumber: String): RefreshTokenPlain {
         val bytes = ByteArray(64)
         secureRandom.nextBytes(bytes)
         val opaque = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)

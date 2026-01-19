@@ -8,7 +8,7 @@ import com.meesam.domain.dto.UserResponse
 interface IAuthRepository {
     suspend fun generateOtp(authenticationRequest: AuthenticationRequest): Int
     suspend fun register(userRequest: UserRequest): UserResponse
-    suspend fun validateOtpAndLogin(otp: Int): AuthenticationResponse
+    suspend fun validateOtpAndLogin(otp: Int): UserResponse
     suspend fun getUserByPhoneNumber(phoneNumber: String): UserResponse
-    suspend fun deleteAllOtpWithPhoneNumber(phoneNumber: String)
+    suspend fun deleteAllOtpWithPhoneNumber(phoneNumber: String): Unit
 }

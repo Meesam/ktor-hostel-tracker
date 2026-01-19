@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -60,4 +62,8 @@ dependencies {
     implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
     implementation("io.insert-koin:koin-ktor:4.0.0")
     implementation("io.insert-koin:koin-logger-slf4j:4.0.0")
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.compilerOptions {
+    freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
 }

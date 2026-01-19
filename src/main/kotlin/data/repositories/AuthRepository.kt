@@ -2,6 +2,7 @@ package com.meesam.data.repositories
 
 import com.meesam.data.db.DatabaseFactory.dbQuery
 import com.meesam.data.tables.OtpTable
+import com.meesam.data.tables.OtpTable.expiresAt
 import com.meesam.data.tables.UserTable
 import com.meesam.domain.dto.AuthenticationRequest
 import com.meesam.domain.dto.AuthenticationResponse
@@ -90,8 +91,23 @@ class AuthRepository : IAuthRepository {
         }
     }
 
-    override suspend fun validateOtpAndLogin(otp: Int): AuthenticationResponse {
-        TODO("Not yet implemented")
+    override suspend fun validateOtpAndLogin(otp: Int): UserResponse = dbQuery {
+        try {
+            val row = OtpTable
+                .selectAll()
+                .where{
+                    OtpTable.otp eq otp and (expiresAt greaterEq Clock.System.now())
+                }
+                .singleOrNull()
+                ?: throw ResourceNotFoundException("Invalid or expired Otp '${otp}'")
+               getUserByPhoneNumber(row[OtpTable.phoneNumber])
+        } catch (e: ResourceNotFoundException) {
+            throw ResourceNotFoundException(e.message.toString())
+        } catch (e: ExposedSQLException) {
+            throw DomainException(e.message.toString())
+        } catch (e: Exception) {
+            throw DomainException(e.message.toString())
+        }
     }
 
     override suspend fun getUserByPhoneNumber(phoneNumber: String): UserResponse = dbQuery {
@@ -121,7 +137,7 @@ class AuthRepository : IAuthRepository {
         }
     }
 
-    override suspend fun deleteAllOtpWithPhoneNumber(phoneNumber: String) {
+    override suspend fun deleteAllOtpWithPhoneNumber(phoneNumber: String): Unit = dbQuery {
         try {
             OtpTable.deleteWhere {
                 OtpTable.phoneNumber eq phoneNumber.trim()
