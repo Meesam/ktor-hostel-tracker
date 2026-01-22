@@ -3,11 +3,13 @@ package com.meesam.data.repositories
 import com.meesam.data.db.DatabaseFactory.dbQuery
 import com.meesam.data.tables.OtpTable
 import com.meesam.data.tables.OtpTable.expiresAt
+import com.meesam.data.tables.RefreshTokensTable
 import com.meesam.data.tables.UserTable
 import com.meesam.domain.dto.AuthenticationRequest
 import com.meesam.domain.dto.AuthenticationResponse
 import com.meesam.domain.dto.UserRequest
 import com.meesam.domain.dto.UserResponse
+import com.meesam.domain.dto.UserUpdateRequest
 import com.meesam.domain.exceptionHandler.ConflictException
 import com.meesam.domain.exceptionHandler.DomainException
 import com.meesam.domain.exceptionHandler.ResourceNotFoundException
@@ -16,14 +18,19 @@ import io.ktor.server.plugins.NotFoundException
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Contextual
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 import org.slf4j.LoggerFactory
 import java.security.SecureRandom
+import java.util.UUID
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -147,5 +154,43 @@ class AuthRepository : IAuthRepository {
         } catch (e: Exception) {
             throw DomainException(e.message.toString())
         }
+    }
+
+    override suspend fun saveRefreshToken(tokenValue: String, phone: String, userIdValue: @Contextual UUID): Unit = dbQuery {
+        try {
+            RefreshTokensTable.deleteWhere{
+                RefreshTokensTable.phoneNumber eq phone.trim() and (RefreshTokensTable.userId eq userIdValue )
+            }
+
+          val d =  RefreshTokensTable.insert {
+                it[token] = tokenValue
+                it[userId] = userIdValue
+                it[phoneNumber] = phone.trim()
+                it[expiresAt] = Clock.System.now() + 7.days
+            }
+
+        }catch (e: ResourceNotFoundException) {
+            throw ResourceNotFoundException(e.message.toString())
+        } catch (e: ExposedSQLException) {
+            throw DomainException(e.message.toString())
+        } catch (e: Exception) {
+            throw DomainException(e.message.toString())
+        }
+    }
+
+    override suspend fun updateUser(userUpdateRequest: UserUpdateRequest): Unit = dbQuery{
+        val row = UserTable
+            .selectAll()
+            .where { UserTable.id eq userUpdateRequest.id and (UserTable.isActive eq true) }
+            .limit(1)
+            .singleOrNull()
+            ?: throw ResourceNotFoundException("User not found with Id '${userUpdateRequest.id}'")
+        UserTable.update(where = { UserTable.id eq userUpdateRequest.id}){
+           it[name] = userUpdateRequest.name ?: row[name]
+           it[email] = userUpdateRequest.email ?: row[email]
+           it[dob] = userUpdateRequest.dob ?: row[dob]
+           it[lastLoginAt] = CurrentDateTime
+        }
+
     }
 }

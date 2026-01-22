@@ -22,6 +22,6 @@ data class UserRequest(
 
     val dob: Instant? = null,
     val lastLoginAt: Instant? = null,
-    @field:NotBlank(message = "email cannot be blank")
+    @field:NotBlank(message = "Phone number cannot be blank")
     val phone: String = "",
 )

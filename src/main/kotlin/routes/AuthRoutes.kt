@@ -4,6 +4,7 @@ import com.meesam.domain.dto.AuthenticationRequest
 import com.meesam.domain.dto.LoginRequest
 import com.meesam.domain.dto.LoginResponse
 import com.meesam.domain.dto.UserRequest
+import com.meesam.domain.dto.UserUpdateRequest
 import com.meesam.security.TokenService
 import com.meesam.services.IAuthService
 import com.meesam.utils.BeanValidation
@@ -60,6 +61,12 @@ fun Route.authRoutes(authService: IAuthService) {
                user.let {
                    val access = tokenService.createAccessToken(user.phoneNumber!!, user.role)
                    val refresh = tokenService.createRefreshToken(user.id, phoneNumber = user.phoneNumber)
+                   authService.saveRefreshToken(refresh.token, user.phoneNumber, user.id)
+                   authService.updateUser(UserUpdateRequest(
+                       id = user.id,
+                       name = user.name,
+                       email = user.email,
+                   ))
                    call.respond(
                        HttpStatusCode.OK,
                        LoginResponse(
