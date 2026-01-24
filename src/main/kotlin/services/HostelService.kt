@@ -3,6 +3,7 @@ package com.meesam.services
 import com.meesam.data.repositories.IHostelRepository
 import com.meesam.domain.dto.HostelResponse
 import com.meesam.domain.dto.NewHostelRequest
+import com.meesam.domain.dto.PagedResponse
 import com.meesam.domain.dto.UpdateHostelRequest
 import kotlinx.serialization.Contextual
 import java.util.UUID
@@ -24,5 +25,12 @@ class HostelService(
 
     override suspend fun getHostelById(hostelId: @Contextual UUID): HostelResponse {
         return hostelRepository.getHostelById(hostelId)
+    }
+
+    override suspend fun getAllHostel(
+        page: Int,
+        size: Int
+    ): PagedResponse<HostelResponse> {
+        return hostelRepository.getAllHostel(page, size)
     }
 }

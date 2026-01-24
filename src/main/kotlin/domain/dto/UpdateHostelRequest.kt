@@ -1,6 +1,7 @@
 package com.meesam.domain.dto
 
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import kotlinx.serialization.Serializable
 import java.util.UUID
 import kotlinx.serialization.Contextual
@@ -8,7 +9,7 @@ import kotlinx.serialization.Contextual
 @Serializable
 data class UpdateHostelRequest(
 
-    @field:NotBlank(message = "HostelId cannot be blank")
+    @field:NotNull(message = "HostelId cannot be blank")
     val hostelId:@Contextual  UUID,
 
     @field:NotBlank(message = "Name cannot be blank")

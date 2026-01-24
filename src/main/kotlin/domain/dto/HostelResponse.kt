@@ -15,5 +15,6 @@ data class HostelResponse(
     val country: String?,
     val zipCode: String?,
     val contactName: String,
-    val contactNumber: String
+    val contactNumber: String,
+    val isActive: Boolean
 )
