@@ -1,17 +1,25 @@
 package com.meesam.plugins
 
 import com.meesam.data.repositories.AuthRepository
+import com.meesam.data.repositories.CoachingRepository
 import com.meesam.data.repositories.HostelPropertiesRepository
 import com.meesam.data.repositories.HostelRepository
 import com.meesam.data.repositories.IAuthRepository
+import com.meesam.data.repositories.ICoachingRepository
 import com.meesam.data.repositories.IHostelPropertiesRepository
 import com.meesam.data.repositories.IHostelRepository
+import com.meesam.data.repositories.IUserAddressRepository
+import com.meesam.data.repositories.UserAddressRepository
 import com.meesam.services.AuthService
+import com.meesam.services.CoachingService
 import com.meesam.services.HostelPropertyService
 import com.meesam.services.HostelService
 import com.meesam.services.IAuthService
+import com.meesam.services.ICoachingService
 import com.meesam.services.IHostelPropertyService
 import com.meesam.services.IHostelService
+import com.meesam.services.IUserAddressService
+import com.meesam.services.UserAddressService
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import org.koin.dsl.module
@@ -23,11 +31,15 @@ val appModule = module {
     single<IAuthRepository> { AuthRepository() }
     single<IHostelRepository> { HostelRepository() }
     single<IHostelPropertiesRepository> { HostelPropertiesRepository() }
+    single<ICoachingRepository> { CoachingRepository() }
+    single<IUserAddressRepository> { UserAddressRepository() }
 
     // Inject the repository into the service
     single<IAuthService> { AuthService(get()) }
     single<IHostelService> { HostelService(get()) }
     single<IHostelPropertyService> { HostelPropertyService(get()) }
+    single<ICoachingService> { CoachingService(get()) }
+    single<IUserAddressService> { UserAddressService(get()) }
 }
 
 fun Application.configureDependencies(){

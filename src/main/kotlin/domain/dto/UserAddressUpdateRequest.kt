@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.hibernate.validator.constraints.UUID
 import kotlin.uuid.ExperimentalUuidApi
@@ -12,41 +13,32 @@ import kotlin.uuid.Uuid
 @Serializable
 data class UserAddressUpdateRequest @OptIn(ExperimentalUuidApi::class) constructor(
 
-    @field:UUID(message = "Id must be valid")
-    val id: Uuid,
+    @field:NotNull(message = "AddressId cannot be blank")
+    val addressId:@Contextual java.util.UUID,
 
-    @field:NotNull(message = "address cannot be null")
-    @field:NotBlank(message = "address cannot be blank")
-    @field:Size(min = 3, max = 100, message = "Address between 3 and 100 characters")
-    val address: String = "",
+    @field:NotNull(message = "UserId cannot be blank")
+    val userId:@Contextual java.util.UUID,
 
-    @field:NotNull(message = "city cannot be null")
-    @field:NotBlank(message = "city cannot be blank")
-    @field:Size(min = 3, max = 100, message = "city between 3 and 100 characters")
-    val city: String = "",
+    @field:NotBlank(message = "Address cannot be blank")
+    val address: String,
 
-    @field:NotNull(message = "state cannot be null")
-    @field:NotBlank(message = "state cannot be blank")
-    @field:Size(min = 3, max = 100, message = "state between 3 and 100 characters")
-    val state: String = "",
+    @field:NotBlank(message = "City cannot be blank")
+    val city: String,
 
-    @field:NotNull(message = "country cannot be null")
-    @field:NotBlank(message = "country cannot be blank")
-    @field:Size(min = 3, max = 100, message = "country between 3 and 100 characters")
-    val country: String = "",
+    @field:NotBlank(message = "State cannot be blank")
+    val state: String,
 
-    @field:NotNull(message = "address cannot be null")
-    @field:NotBlank(message = "address cannot be blank")
-    @field:Size(min = 1, max = 10, message = "pin between 1 and 10 characters")
-    val pin: String = "",
+    @field:NotBlank(message = "Country cannot be blank")
+    val country: String,
 
-    @field:NotNull(message = "street cannot be null")
-    @field:NotBlank(message = "street cannot be blank")
-    @field:Min(value = 1, message = "street must be greater than zero")
-    val street:String = "",
+    @field:NotBlank(message = "ZipCode cannot be blank")
+    val zipCode: String,
 
-    val nearBy:String? = null,
+    @field:NotBlank(message = "Name cannot be blank")
+    @field:Size(min = 3, max = 100, message = "Name should be between 3 and 100 characters")
+    val contactName: String = "",
 
-    @field:UUID(message = "Userid must be valid")
-    val userId: Uuid
+    @field:NotBlank(message = "Contact number cannot be blank")
+    @field:Size(min = 10, max = 15, message = "Contact number should be 10 digits")
+    val contactNumber: String = "",
 )

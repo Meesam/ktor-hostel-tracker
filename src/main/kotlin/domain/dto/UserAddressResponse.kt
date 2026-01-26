@@ -12,14 +12,10 @@ data class UserAddressResponse(
     val id: @Contextual UUID,
     val city: String? = null,
     val state: String? = null,
-    val pin: String? = null,
-    val street: String? = null,
-    val nearBy: String? = null,
+    val zipCode: String? = null,
+    val address: String? = null,
     val country: String? = null,
-    val userId: Long? = null,
+    val userId: @Contextual UUID,
     val contactName: String? = null,
-    val isPrimary: Boolean = false,
-    val contactNumber: String? = null,
-    val createdAt: LocalDateTime? = null,
-    val addressType: String? = null
+    val contactNumber: String? = null
 )

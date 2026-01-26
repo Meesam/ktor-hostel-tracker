@@ -1,11 +1,15 @@
 package com.meesam.plugins
 
 import com.meesam.routes.authRoutes
+import com.meesam.routes.coachingRoutes
 import com.meesam.routes.hostelPropertyRoutes
 import com.meesam.routes.hostelRoutes
+import com.meesam.routes.userAddressRoute
 import com.meesam.services.IAuthService
+import com.meesam.services.ICoachingService
 import com.meesam.services.IHostelPropertyService
 import com.meesam.services.IHostelService
+import com.meesam.services.IUserAddressService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.authenticate
@@ -25,6 +29,8 @@ fun Application.configureRouting() {
     val authService by inject<IAuthService>()
     val hostelService by inject<IHostelService>()
     val hostelPropertyService by inject<IHostelPropertyService>()
+    val coachingService by inject<ICoachingService>()
+    val userAddressService by inject<IUserAddressService>()
     routing {
         route("/api/v1") {
             get("/health-check") {
@@ -33,6 +39,8 @@ fun Application.configureRouting() {
             authRoutes(authService)
             hostelRoutes(hostelService)
             hostelPropertyRoutes(hostelPropertyService)
+            coachingRoutes(coachingService)
+            userAddressRoute(userAddressService)
             authenticate("auth-jwt") {
                // categoryRoutes()
                 //userRoutes()
