@@ -2,11 +2,13 @@ package com.meesam.plugins
 
 import com.meesam.routes.authRoutes
 import com.meesam.routes.coachingRoutes
+import com.meesam.routes.hostelImageRoute
 import com.meesam.routes.hostelPropertyRoutes
 import com.meesam.routes.hostelRoutes
 import com.meesam.routes.userAddressRoute
 import com.meesam.services.IAuthService
 import com.meesam.services.ICoachingService
+import com.meesam.services.IHostelImageService
 import com.meesam.services.IHostelPropertyService
 import com.meesam.services.IHostelService
 import com.meesam.services.IUserAddressService
@@ -31,6 +33,7 @@ fun Application.configureRouting() {
     val hostelPropertyService by inject<IHostelPropertyService>()
     val coachingService by inject<ICoachingService>()
     val userAddressService by inject<IUserAddressService>()
+    val hostelImageService by inject<IHostelImageService>()
     routing {
         route("/api/v1") {
             get("/health-check") {
@@ -41,6 +44,7 @@ fun Application.configureRouting() {
             hostelPropertyRoutes(hostelPropertyService)
             coachingRoutes(coachingService)
             userAddressRoute(userAddressService)
+            hostelImageRoute(hostelImageService)
             authenticate("auth-jwt") {
                // categoryRoutes()
                 //userRoutes()

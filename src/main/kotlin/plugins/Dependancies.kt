@@ -2,20 +2,24 @@ package com.meesam.plugins
 
 import com.meesam.data.repositories.AuthRepository
 import com.meesam.data.repositories.CoachingRepository
+import com.meesam.data.repositories.HostelImageRepository
 import com.meesam.data.repositories.HostelPropertiesRepository
 import com.meesam.data.repositories.HostelRepository
 import com.meesam.data.repositories.IAuthRepository
 import com.meesam.data.repositories.ICoachingRepository
+import com.meesam.data.repositories.IHostelImageRepository
 import com.meesam.data.repositories.IHostelPropertiesRepository
 import com.meesam.data.repositories.IHostelRepository
 import com.meesam.data.repositories.IUserAddressRepository
 import com.meesam.data.repositories.UserAddressRepository
 import com.meesam.services.AuthService
 import com.meesam.services.CoachingService
+import com.meesam.services.HostelImageService
 import com.meesam.services.HostelPropertyService
 import com.meesam.services.HostelService
 import com.meesam.services.IAuthService
 import com.meesam.services.ICoachingService
+import com.meesam.services.IHostelImageService
 import com.meesam.services.IHostelPropertyService
 import com.meesam.services.IHostelService
 import com.meesam.services.IUserAddressService
@@ -33,6 +37,7 @@ val appModule = module {
     single<IHostelPropertiesRepository> { HostelPropertiesRepository() }
     single<ICoachingRepository> { CoachingRepository() }
     single<IUserAddressRepository> { UserAddressRepository() }
+    single<IHostelImageRepository> { HostelImageRepository() }
 
     // Inject the repository into the service
     single<IAuthService> { AuthService(get()) }
@@ -40,6 +45,7 @@ val appModule = module {
     single<IHostelPropertyService> { HostelPropertyService(get()) }
     single<ICoachingService> { CoachingService(get()) }
     single<IUserAddressService> { UserAddressService(get()) }
+    single<IHostelImageService> { HostelImageService(get()) }
 }
 
 fun Application.configureDependencies(){
